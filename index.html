@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Room Stager</title>
+    <link rel="stylesheet" href="index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.sh/@google/genai@^0.14.0"
+        }
+      }
+    </script>
+    <script type="module" src="index.tsx"></script>
+  </head>
+  <body>
+    <div class="app-container">
+      <aside class="sidebar">
+        <header class="sidebar-header">
+          <div class="logo"></div>
+          <h1>AI Room Stager</h1>
+        </header>
+
+        <div class="sidebar-content">
+          <details class="control-group" open>
+            <summary>
+              <div class="summary-content">
+                <span class="summary-number">1</span>
+                <h3>Primary Photo</h3>
+              </div>
+            </summary>
+            <div class="control-group-content">
+              <p>Upload a photo of the room you want to stage.</p>
+              <div id="image-upload-area" class="upload-area">
+                <div id="image-upload-placeholder">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" x2="12" y1="3" y2="15" />
+                  </svg>
+                  <span>Drag & drop or click to upload</span>
+                </div>
+                <img
+                  id="image-upload-preview"
+                  src=""
+                  alt="Uploaded room preview"
+                />
+              </div>
+              <input type="file" id="image-upload" accept="image/*" />
+            </div>
+          </details>
+
+          <details class="control-group" open>
+            <summary>
+              <div class="summary-content">
+                <span class="summary-number">2</span>
+                <h3>Design Style</h3>
+              </div>
+            </summary>
+            <div class="control-group-content">
+              <div class="inline-controls">
+                <div class="select-wrapper">
+                  <label for="room-type-select">Room Type</label>
+                  <select id="room-type-select">
+                    <option value="Living Room">Living Room</option>
+                    <option value="Bedroom">Bedroom</option>
+                    <option value="Dining Room">Dining Room</option>
+                    <option value="Home Office">Home Office</option>
+                    <option value="Kitchen">Kitchen</option>
+                    <option value="Bathroom">Bathroom</option>
+                  </select>
+                </div>
+                <div class="select-wrapper">
+                  <label for="style-select">Style</label>
+                  <select id="style-select">
+                    <option value="Modern">Modern</option>
+                    <option value="Scandinavian">Scandinavian</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Minimalist">Minimalist</option>
+                    <option value="Bohemian">Bohemian</option>
+                    <option value="Coastal">Coastal</option>
+                  </select>
+                </div>
+              </div>
+              <div class="color-controls">
+                <div class="color-toggle-wrapper">
+                  <input type="checkbox" id="use-custom-colors" checked />
+                  <label for="use-custom-colors">Use Custom Colors</label>
+                </div>
+                <div class="color-picker-group" id="color-picker-group">
+                  <div class="color-picker-wrapper">
+                    <label for="primary-color">Primary</label>
+                    <input type="color" id="primary-color" value="#F5F5DC" />
+                  </div>
+                  <div class="color-picker-wrapper">
+                    <label for="secondary-color">Secondary</label>
+                    <input
+                      type="color"
+                      id="secondary-color"
+                      value="#6082B6"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="control-group" open>
+            <summary>
+              <div class="summary-content">
+                <span class="summary-number">3</span>
+                <h3>Refinements</h3>
+              </div>
+            </summary>
+            <div class="control-group-content">
+              <div class="checkbox-wrapper">
+                <input type="checkbox" id="remove-furniture-checkbox" />
+                <label for="remove-furniture-checkbox"
+                  >Remove existing furniture first</label
+                >
+              </div>
+              <div class="refinement-inputs">
+                 <label for="custom-prompt">Additional Details</label>
+                <textarea
+                  id="custom-prompt"
+                  placeholder="e.g., 'Make the room feel bright and airy.'"
+                  rows="3"
+                  aria-label="Additional details for room staging"
+                ></textarea>
+                 <label for="inspiration-upload" class="upload-label secondary-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                    Add Inspiration Images
+                </label>
+                 <input
+                    type="file"
+                    id="inspiration-upload"
+                    accept="image/*"
+                    multiple
+                  />
+                <div id="inspiration-gallery" class="inspiration-gallery"></div>
+              </div>
+            </div>
+          </details>
+          
+           <section id="history-container" class="history-container" hidden>
+              <h2>Design History</h2>
+              <div id="history-gallery" class="history-gallery"></div>
+           </section>
+
+        </div>
+
+        <div class="sidebar-footer">
+          <button id="generate-button" disabled>
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+            Stage My Room
+          </button>
+          <div id="error-message" class="error-message" role="alert"></div>
+        </div>
+      </aside>
+
+      <main class="content-area">
+        <div class="results-container">
+          <div class="image-box" id="original-box">
+            <h2>Original</h2>
+            <div class="image-placeholder-wrapper" id="original-image-wrapper">
+              <img
+                id="original-image"
+                src=""
+                alt="Original empty room"
+                class="preview-image"
+                aria-hidden="true"
+              />
+              <p id="original-placeholder">Upload an image to begin</p>
+            </div>
+          </div>
+          <div class="image-box" id="staged-box">
+            <div class="image-box-header">
+              <h2>Staged</h2>
+              <span id="staged-hint" class="staged-hint" hidden
+                >Click an item to find it on Amazon</span
+              >
+            </div>
+            <div class="image-placeholder-wrapper" id="staged-image-wrapper">
+              <img
+                id="staged-image"
+                src=""
+                alt="AI-staged room with furniture"
+                class="preview-image"
+                aria-hidden="true"
+              />
+              <div id="loader" class="loader" role="status" aria-hidden="true">
+                <div class="spinner"></div>
+                <p>Staging your room...</p>
+                <span>This may take a moment. Great designs are worth the wait!</span>
+              </div>
+              <div
+                id="identifier-loader"
+                class="identifier-loader"
+                role="status"
+                aria-hidden="true"
+              >
+                <div class="spinner"></div>
+                <p>Identifying item...</p>
+              </div>
+              <p id="staged-placeholder">Your staged room will appear here</p>
+            </div>
+            <div id="tweak-controls" class="tweak-controls" hidden>
+              <button id="tweak-mode-button" class="tweak-button">
+                Tweak Image
+              </button>
+              <button
+                id="apply-tweaks-button"
+                class="tweak-button apply-tweaks-button"
+                hidden
+              >
+                Apply Tweaks
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="annotation-modal-overlay" class="modal-overlay">
+      <div id="annotation-modal" class="modal">
+        <h2>Add Annotation</h2>
+        <p>Describe the furniture or change you want to make here.</p>
+        <textarea
+          id="annotation-input"
+          rows="3"
+          placeholder="e.g., 'a plush blue armchair' or 'make this window larger'"
+        ></textarea>
+        <div class="modal-buttons">
+          <button id="modal-cancel-button" class="button-secondary">
+            Cancel
+          </button>
+          <button id="modal-save-button">Save</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

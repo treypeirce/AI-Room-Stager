@@ -1,0 +1,5 @@
+{
+  "name": "AI Room Stager",
+  "description": "Upload a photo of an empty room and use Gemini to virtually stage it with furniture in various styles.",
+  "requestFramePermissions": []
+}
